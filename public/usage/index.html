@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="profile.css">
+    <title>Profile</title>
+</head>
+<body>
+    <div class="main">
+        <div class="topBox">
+            <h1 id="username">Username</h1>
+            <h1 id="package"></h1>
+        </div>
+
+        <div class="usage">
+            <h2>Usage</h2>
+            <div class="usagePr">
+                <h2 id="usage">15/100</h2>
+                <progress value="15" max="100" id="progress"></progress>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function getData(key) {
+            try{
+                const response = await fetch(`http://localhost:3000/api/getData?key=${key}`);
+                const data = await response.json();
+                console.log(data);
+
+                document.getElementById('username').textContent = data.id
+                document.getElementById('package').textContent = 'Plan: ' + data.userPackage.toLocaleUpperCase()
+                document.getElementById('usage').textContent = `${data.apiUsage} / ${data.userLimit}`
+                document.getElementById('progress').max = data.userLimit
+                document.getElementById('progress').value = data.apiUsage
+            } catch(error){
+                console.log(error)
+            }
+        }
+
+        getData('202c2d25-9fa4-48f6-9963-63d4e74b19ad')
+    </script>
+</body>
+</html>

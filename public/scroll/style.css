@@ -1,0 +1,27 @@
+body{
+    width: 100%;
+    height: max-content;
+    background-color: #212121;
+}
+.main{
+    width: 100%;
+    height: 100vh;
+}
+.box{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.swiper-pagination-bullet{
+    background-color: grey;
+}
+.swiper-pagination-bullet-active{
+    background-color: white;
+}
+.box h1{
+    color: #FFFFFF;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
