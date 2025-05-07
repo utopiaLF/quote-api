@@ -27,6 +27,16 @@ body{
     justify-content: space-between;
     color: #FFFFFF;
 }
+.main .topBox .user{
+    display: flex;
+    align-items: center;
+}
+.main .topBox .user i{
+    font-size: 1.6rem;
+}
+.main .topBox .username{
+    margin-left: 10px;
+}
 .main .usage{
     width: 100%;
     height: max-content;
@@ -42,4 +52,6 @@ body{
 }
 .main .usage progress{
     margin-top: 20px;
+    background-color: #363636;
+    width: 100%;
 }

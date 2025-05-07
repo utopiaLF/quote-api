@@ -66,16 +66,32 @@ app.get('/api/quote', (req, res)=>{
                         }
         
                         res.json({
-                            message: 'You used api one time'
+                            message: 'ok'
                         })
                     })
                 } else {
                     res.json({
-                        message: 'Limit is reached'
+                        message: 'You reached the limit'
                     })
                 }
             })
         }
+    });
+});
+
+app.get('/api/getData', (req, res)=>{
+    const key = req.query.key;
+
+    if(!key) {
+        return res.status(404).send('Key not found');
+    }
+
+    db.query('SELECT * FROM users WHERE apiKey = ?', [key], (err, result)=>{
+        if(err) {
+            return res.status(500).send('Some error');
+        }
+
+        res.json(result[0]);
     });
 });
 
