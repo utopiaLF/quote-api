@@ -2,18 +2,26 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 app.use(cors());
-const {v4: uuid} = require('uuid');
-const mysql = require('mysql2');
+
 const path = require('path');
+
+const db = require('./src/config/db.js');
+const bcrypt = require('bcryptjs');
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'quotegram'
-});
+async function testDbConnection() {
+    try {
+      const [rows] = await db.query('SELECT 1'); // Run a simple query to check the connection
+      console.log('Database connection successful:', rows); // If successful, log the result
+    } catch (error) {
+      console.error('Error connecting to the database:', error.message); // If an error occurs, log it
+    }
+  }
+  
+  testDbConnection();
+
 
 app.get('/api/generate', (req, res)=>{
     const apiKey = uuid();
@@ -92,6 +100,42 @@ app.get('/api/getData', (req, res)=>{
         }
 
         res.json(result[0]);
+    });
+});
+
+app.get('/login', (req, res)=>{
+    console.log('login triggered');
+    
+    const { username, password } = req.query;
+
+    if(!username || !password) {
+        return res.status(500).send('You missed something in params');
+    }
+
+    db.execute('SELECT * FROM users WHERE username = ?', [username], (err, result)=>{
+        console.log('DB query finished:', result);
+        if(err) {
+            return res.status(500).send('Some error in DB');
+        }
+
+        if(result.length === 0) {
+            return res.status(404).send('User not found');
+        }
+
+        const user = result[0];
+        bcrypt.compare(password, user.password, (err, isMatch)=>{
+            if(err) {
+                return res.status(500).send('Some error in hashing');
+            }
+
+            if(isMatch) {
+                console.log('Login successful')
+                return res.send('Login successful');
+            } else {
+                console.log('Incorrect password')
+                return res.status(401).send('Incorrect password');
+            }
+        });
     });
 });
 
