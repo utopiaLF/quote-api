@@ -8,20 +8,40 @@
     <title>Profile</title>
 </head>
 <body>
+    <header>
+        <div class="profile">
+            <h2 id="username">Loading</h2>
+            <h2 id="email">Loading</h2>
+        </div>
+    </header>
+
     <div class="main">
-        <div class="topBox">
-            <div class="user">
-                <i class="bi bi-person-circle"></i>
-                <h1 id="username" class="username">Username</h1>
-            </div>
-            <h1 id="package"></h1>
+        <div class="getApi" id="getApi">
+            <h1>It seems like you don't have our API yet</h1>
+            <button id="getApiBtn">Get API key</button>
         </div>
 
-        <div class="usage">
-            <h2>Usage</h2>
-            <div class="usagePr">
-                <h2 id="usage">15/100</h2>
-                <progress value="15" max="100" id="progress"></progress>
+        <div class="myInfos" id="myInfos">
+            
+            <div class="progress">
+                <h1>API Usage</h1>
+                <h2>0/100</h2>
+                <progress value="30" max="100"></progress>
+            </div>
+
+            <div class="myApiKeys">
+                <div>
+                    <h3>Your api key is here</h3>
+                    <button>Show</button>
+                </div>
+                <div>
+                    <h3>Your api key is here</h3>
+                    <button>Show</button>
+                </div>
+                <div>
+                    <h3>Your api key is here</h3>
+                    <button>Show</button>
+                </div>
             </div>
         </div>
     </div>
@@ -31,7 +51,6 @@
             try{
                 const response = await fetch(`http://localhost:3000/api/getData?key=${key}`);
                 const data = await response.json();
-                console.log(data);
 
                 document.getElementById('username').textContent = data.id
                 document.getElementById('package').textContent = 'Plan: ' + data.userPackage.toLocaleUpperCase()
@@ -43,7 +62,41 @@
             }
         }
 
-        getData('202c2d25-9fa4-48f6-9963-63d4e74b19ad')
+        async function getProfile(token) {
+            try{
+                const response = await fetch(`http://localhost:3000/protected`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                document.getElementById('username').innerHTML = `<i class="bi bi-person-fill"></i> ${data.username}` 
+                document.getElementById('email').innerHTML = `<i class="bi bi-envelope"></i> ${data.email}`
+
+                if(!data.apiKey1) {
+                    document.getElementById('myInfos').classList.add('off');
+                } else {
+                    document.getElementById('getApi').classList.add('off');
+                }
+            } catch(err) {
+                console.log(err)
+            }
+        }
+
+        const authToken = localStorage.getItem('authToken');
+        getProfile(authToken);
+
+        // getData('202c2d25-9fa4-48f6-9963-63d4e74b19ad')
+
+        document.getElementById('getApiBtn').addEventListener('click', ()=>{
+            window.location.href = '/buy'
+        })
+
+        if(!authToken) {
+            window.location.href = '/auth';
+        }
     </script>
 </body>
 </html>
